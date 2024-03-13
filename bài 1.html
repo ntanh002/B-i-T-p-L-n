@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Bài Toán Đếm</h1>
+    <button onclick="tinhToHopVaHienThi()">Tính và Hiển Thị</button>
+    <p id="ketQua"></p>
+
+    <script>
+        // JavaScript code here
+        // This function computes the factorial
+        function tinhGiaiThua(n) {
+            if (n <= 1) {
+                return 1;
+            } else {
+                return n * tinhGiaiThua(n - 1);
+            }
+        }
+
+        // This function computes the combination C(n, k)
+        function tinhToHop(n, k) {
+            return tinhGiaiThua(n) / (tinhGiaiThua(k) * tinhGiaiThua(n - k));
+        }
+
+        function tinhToHopVaHienThi() {
+            var soHang = 5;
+            var soCot = 4;
+            var soChon = 2;
+
+            var soCachChon = tinhToHop(soHang * soCot, soChon);
+
+            // Update the content of the element with id="ketQua"
+            document.getElementById("ketQua").innerHTML = "Số cách chọn 2 ô từ bảng " + soHang + " hàng và " + soCot + " cột là: " + soCachChon;
+        }
+    </script>
+</body>
+</html>

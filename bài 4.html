@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Toán Tối Ưu</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        #output {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Bài Toán Tối Ưu</h2>
+
+    <script>
+        function maxDaysRented(customers) {
+            // Sắp xếp danh sách khách hàng theo số ngày giảm dần
+            const sortedCustomers = customers.sort((a, b) => b.days.length - a.days.length);
+
+            // Danh sách các ngày đã được đặt máy
+            const rentedDays = new Set();
+
+            // Tổng số ngày sử dụng máy
+            let totalDaysRented = 0;
+
+            // Duyệt qua từng khách hàng
+            for (const customer of sortedCustomers) {
+                // Kiểm tra xem có thể đáp ứng yêu cầu của khách hàng không
+                if (!customer.days.some(day => rentedDays.has(day))) {
+                    // Nếu có thể đáp ứng, thêm các ngày đã đặt máy vào danh sách
+                    customer.days.forEach(day => rentedDays.add(day));
+                    // Cộng thêm số ngày sử dụng máy của khách hàng vào tổng số ngày
+                    totalDaysRented += customer.days.length;
+                }
+            }
+
+            return totalDaysRented;
+        }
+
+        function solveRentalProblem() {
+            const customers = [
+                { days: [1, 2, 3] },
+                { days: [3, 4, 5] },
+                { days: [6, 7, 8] },
+                // Thêm các khách hàng khác nếu cần
+            ];
+
+            const result = maxDaysRented(customers);
+
+            // Hiển thị kết quả
+            document.getElementById('output').innerHTML = `Tổng số ngày sử dụng máy lớn nhất: ${result}`;
+        }
+    </script>
+
+    <button onclick="solveRentalProblem()">Giải bài toán</button>
+
+    <div id="output"></div>
+</body>
+</html>

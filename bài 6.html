@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimum Spanning Tree - Prim's Algorithm</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Tìm cây khung nhỏ nhất bằng thuật toán Prim</h2>
+
+    <div id="output"></div>
+
+    <button id="displayMSTBtn">Hiển thị kết quả</button> <!-- Thêm nút để hiển thị kết quả -->
+
+    <script>
+        class Graph {
+            constructor() {
+                this.vertices = [];
+                this.edges = [];
+            }
+
+            addVertex(vertex) {
+                this.vertices.push(vertex);
+                this.edges[vertex] = [];
+            }
+
+            addEdge(vertex1, vertex2, weight) {
+                this.edges[vertex1].push({ node: vertex2, weight: weight });
+                this.edges[vertex2].push({ node: vertex1, weight: weight });
+            }
+
+            prim(startVertex) {
+                const mst = [];
+                const visited = {};
+                const pq = new PriorityQueue();
+
+                // Khởi tạo tất cả các đỉnh chưa được thăm và độ ưu tiên của chúng là vô cực
+                this.vertices.forEach(vertex => {
+                    visited[vertex] = false;
+                    pq.enqueue(vertex, Infinity);
+                });
+
+                // Đặt độ ưu tiên của đỉnh khởi đầu là 0
+                pq.changePriority(startVertex, 0);
+
+                while (!pq.isEmpty()) {
+                    const currentVertex = pq.dequeue().data;
+                    visited[currentVertex] = true;
+                    mst.push(currentVertex);
+
+                    this.edges[currentVertex].forEach(neighbor => {
+                        if (!visited[neighbor.node] && neighbor.weight < pq.priority(neighbor.node)) {
+                            pq.changePriority(neighbor.node, neighbor.weight);
+                        }
+                    });
+                }
+
+                return mst;
+            }
+        }
+
+        class PriorityQueue {
+            constructor() {
+                this.heap = [];
+            }
+
+            enqueue(data, priority) {
+                const newNode = new Node(data, priority);
+                this.heap.push(newNode);
+                this.bubbleUp();
+            }
+
+            dequeue() {
+                const max = this.heap[0];
+                const end = this.heap.pop();
+                if (this.heap.length > 0) {
+                    this.heap[0] = end;
+                    this.sinkDown();
+                }
+                return max;
+            }
+
+            isEmpty() {
+                return this.heap.length === 0;
+            }
+
+            bubbleUp() {
+                let index = this.heap.length - 1;
+                const node = this.heap[index];
+                while (index > 0) {
+                    const parentIndex = Math.floor((index - 1) / 2);
+                    const parent = this.heap[parentIndex];
+                    if (node.priority >= parent.priority) break;
+                    this.heap[parentIndex] = node;
+                    this.heap[index] = parent;
+                    index = parentIndex;
+                }
+            }
+
+            sinkDown() {
+                let index = 0;
+                const length = this.heap.length;
+                const element = this.heap[0];
+                while (true) {
+                    const leftChildIndex = 2 * index + 1;
+                    const rightChildIndex = 2 * index + 2;
+                    let leftChild, rightChild;
+                    let swap = null;
+
+                    if (leftChildIndex < length) {
+                        leftChild = this.heap[leftChildIndex];
+                        if (leftChild.priority < element.priority) {
+                            swap = leftChildIndex;
+                        }
+                    }
+                    if (rightChildIndex < length) {
+                        rightChild = this.heap[rightChildIndex];
+                        if (
+                            (swap === null && rightChild.priority < element.priority) ||
+                            (swap !== null && rightChild.priority < leftChild.priority)
+                        ) {
+                            swap = rightChildIndex;
+                        }
+                    }
+                    if (swap === null) break;
+                    this.heap[index] = this.heap[swap];
+                    this.heap[swap] = element;
+                    index = swap;
+                }
+            }
+
+            changePriority(data, priority) {
+                for (let i = 0; i < this.heap.length; i++) {
+                    if (this.heap[i].data === data) {
+                        this.heap[i].priority = priority;
+                        this.bubbleUp();
+                        this.sinkDown();
+                        return;
+                    }
+                }
+            }
+
+            priority(data) {
+                for (let i = 0; i < this.heap.length; i++) {
+                    if (this.heap[i].data === data) {
+                        return this.heap[i].priority;
+                    }
+                }
+            }
+        }
+
+        class Node {
+            constructor(data, priority) {
+                this.data = data;
+                this.priority = priority;
+            }
+        }
+
+        // Xử lý sự kiện khi nhấn vào nút "Hiển thị kết quả"
+        document.getElementById('displayMSTBtn').addEventListener('click', function() {
+            const graph = new Graph();
+            const vertices = ['A', 'B', 'C', 'D', 'E'];
+
+            vertices.forEach(vertex => graph.addVertex(vertex));
+
+            graph.addEdge('A', 'B', 2);
+            graph.addEdge('A', 'C', 3);
+            graph.addEdge('B', 'C', 1);
+            graph.addEdge('B', 'D', 1);
+            graph.addEdge('C', 'D', 1);
+            graph.addEdge('C', 'E', 4);
+            graph.addEdge('D', 'E', 2);
+
+            const mst = graph.prim('A');
+            const outputElement = document.getElementById('output');
+            outputElement.innerText = `Cây khung nhỏ nhất: ${mst.join(' -> ')}`;
+        });
+    </script>
+</body>
+</html>

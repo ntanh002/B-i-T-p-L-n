@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shortest Path - Floyd's Algorithm</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Tìm đường đi ngắn nhất từ một đỉnh đến tất cả các đỉnh còn lại</h2>
+
+    <div id="output"></div>
+
+    <button id="displayResultBtn">Hiển thị kết quả</button> <!-- Thêm nút để hiển thị kết quả -->
+
+    <script>
+        // Đồ thị
+        class Graph {
+            constructor(numVertices) {
+                this.numVertices = numVertices;
+                this.matrix = [];
+                for (let i = 0; i < numVertices; i++) {
+                    this.matrix[i] = [];
+                    for (let j = 0; j < numVertices; j++) {
+                        if (i === j) {
+                            this.matrix[i][j] = 0; // Khởi tạo đường chéo là 0
+                        } else {
+                            this.matrix[i][j] = Infinity; // Khởi tạo các cạnh còn lại là vô cùng
+                        }
+                    }
+                }
+            }
+
+            addEdge(source, destination, weight) {
+                this.matrix[source][destination] = weight;
+            }
+
+            floyd() {
+                const distance = this.matrix.slice(); // Sao chép ma trận để không ảnh hưởng đến ma trận gốc
+
+                for (let k = 0; k < this.numVertices; k++) {
+                    for (let i = 0; i < this.numVertices; i++) {
+                        for (let j = 0; j < this.numVertices; j++) {
+                            if (distance[i][k] + distance[k][j] < distance[i][j]) {
+                                distance[i][j] = distance[i][k] + distance[k][j];
+                            }
+                        }
+                    }
+                }
+
+                return distance;
+            }
+        }
+
+        // Xử lý sự kiện khi nhấn vào nút "Hiển thị kết quả"
+        document.getElementById('displayResultBtn').addEventListener('click', function() {
+            const graph = new Graph(5); // Đồ thị với 5 đỉnh
+
+            // Thêm các cạnh và trọng số
+            graph.addEdge(0, 1, 3);
+            graph.addEdge(0, 2, 8);
+            graph.addEdge(0, 4, -4);
+            graph.addEdge(1, 3, 1);
+            graph.addEdge(1, 4, 7);
+            graph.addEdge(2, 1, 4);
+            graph.addEdge(3, 0, 2);
+            graph.addEdge(3, 2, -5);
+            graph.addEdge(4, 3, 6);
+
+            const shortestPaths = graph.floyd();
+            const outputElement = document.getElementById('output');
+            let outputHTML = '<h3>Kết quả:</h3><table border="1"><tr><th></th>';
+
+            // Tạo tiêu đề cho bảng
+            for (let i = 0; i < graph.numVertices; i++) {
+                outputHTML += `<th>${i}</th>`;
+            }
+            outputHTML += '</tr>';
+
+            // Hiển thị ma trận đường đi ngắn nhất
+            for (let i = 0; i < graph.numVertices; i++) {
+                outputHTML += `<tr><th>${i}</th>`;
+                for (let j = 0; j < graph.numVertices; j++) {
+                    if (shortestPaths[i][j] === Infinity) {
+                        outputHTML += '<td>∞</td>'; // Khi không có đường đi, hiển thị ∞
+                    } else {
+                        outputHTML += `<td>${shortestPaths[i][j]}</td>`;
+                    }
+                }
+                outputHTML += '</tr>';
+            }
+            outputHTML += '</table>';
+            outputElement.innerHTML = outputHTML;
+        });
+    </script>
+</body>
+</html>

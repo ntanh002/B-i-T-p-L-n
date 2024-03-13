@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liệt Kê Các Cách Chọn 2 Số</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        #ketQua {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Liệt Kê Các Cách Chọn 2 Số</h1>
+    <button onclick="lietKeCachChon()">Liệt Kê</button>
+    <p id="ketQua"></p>
+
+    <script>
+        function lietKeCachChon() {
+            const tapHop = [1, 2, 3, 4];
+            const ketQuaElement = document.getElementById("ketQua");
+
+            let ketQua = "";
+
+            for (let i = 0; i < tapHop.length - 1; i++) {
+                for (let j = i + 1; j < tapHop.length; j++) {
+                    ketQua += "(" + tapHop[i] + ", " + tapHop[j] + ") ";
+                }
+            }
+
+            ketQuaElement.innerHTML = "Các cách chọn 2 số từ tập hợp {1, 2, 3, 4}: " + ketQua;
+        }
+    </script>
+</body>
+</html>
